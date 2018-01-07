@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="//libs.baidu.com/jquery/1.10.2/jquery.min.js">
+</script>
+<script>
+function binsert(list){
+		var tbody =  $("#listtbody").empty();
+		for(i in list){
+		var student=list[i];
+		var row=$("<tr></tr>");
+		$("<td></td>").text(student["csn"]).appendTo(row);
+		$("<td></td>").text(student["cname"]).appendTo(row);
+		$("<td></td>").text(student["tsn"]).appendTo(row);
+		$("<td></td>").text(student["tname"]).appendTo(row);
+		$("<td></td>").text(student["time"]).appendTo(row);
+		$("<td></td>").text(student["site"]).appendTo(row);
+
+		row.appendTo(tbody);	
+	}
+}
+function load_list() {
+	$.ajax({
+        type: 'GET',
+  		url: "/t",
+        data:'' ,
+        dataType: 'html' 
+	})
+	
+    .done(function(data) {
+		var data1=eval("("+data+")");
+		binsert(data1);
+    });
+}
+$(document).ready(function() {
+	load_list();
+});
+function cinsert(){
+	var item = {};
+	item['tsn'] = $('#insertlist input[name="tsn"]').val();
+	item['csn'] = $('#insertlist input[name="csn"]').val();
+	item['cname'] = $('#insertlist input[name="cname"]').val();
+	item['time'] = $('#insertlist input[name="time"]').val();
+	item['site'] = $('#insertlist input[name="site"]').val();
+	var jsondata = JSON.stringify(item);
+	$.ajax({ 
+		type: 'POST', 
+		url: '/t',
+		data: jsondata,
+		dataType: 'json',
+	})
+	
+}
+
+function cinsert1(){
+	load_list();
+		$('#insertlist input[name="tsn"]').val('');
+		$('#insertlist input[name="csn"]').val('');
+		$('#insertlist input[name="cname"]').val('');
+		$('#insertlist input[name="time"]').val('');
+		$('#insertlist input[name="site"]').val('');
+}
+
+function fupdata(){
+	var item = {};
+	item['tsn'] = $('#insertlist input[name="tsn"]').val();
+	item['csn'] = $('#insertlist input[name="csn"]').val();
+	item['cname'] = $('#insertlist input[name="cname"]').val();
+	item['time'] = $('#insertlist input[name="time"]').val();
+	item['site'] = $('#insertlist input[name="site"]').val();
+	var jsondata = JSON.stringify(item);
+	$.ajax({ 
+		type: 'POST', 
+		url: '/t/teacher',
+		data: jsondata,
+		dataType: 'json' 
+	})
+	
+}
+function fupdata1(){
+	load_list();
+		$('#insertlist input[name="tsn"]').val('');
+		$('#insertlist input[name="csn"]').val('');
+		$('#insertlist input[name="cname"]').val('');
+		$('#insertlist input[name="time"]').val('');
+		$('#insertlist input[name="site"]').val('');
+}
+
+function fdelete(){
+	var sn= $('#sdelete input[name="csn"]').val();
+	$.ajax({
+        type: 'DELETE',
+        url: '/t/' + sn,
+        dataType: 'html'
+	})
+	.done(function(){
+		load_list();
+		$('#sdelete input[name="csn"]').val('');
+	});
+
+}
+function fquery(){
+	var sn=$('#squery input[name="tsn"]').val();
+	$.ajax({
+        type: 'GET',
+		url: '/t/teacher/'+sn,
+		dataType: 'html',
+		success:function(data){
+			var data1=eval("("+data+")");
+			binsert(data1);
+		}
+	})
+	.done(function(){
+		$('#squery input[name="tsn"]').val('');
+	});
+
+}
+function fflesh(){
+	load_list();
+
+}
+$(document).ajaxError(function(event, jqxhr, settings, exception) {
+    var msg = jqxhr.status + ': ' + jqxhr.statusText + "\n\n";
+    if (jqxhr.status == 404 || jqxhr.status == 405 ) { 
+        msg += "访问REST资源时，URL错误或该资源的请求方法\n\n"
+        msg += settings.type + '  ' + settings.url  
+    } else {
+        msg += jqxhr.responseText;
+    }
+    alert(msg);
+});
+</script>
+<style>
+		div.header, div.footer {
+	padding:0.5em;
+	color:white;
+	background-color:#7CB8E2;
+	clear:left;
+}
+
+
+div.left {
+	float:left;
+	width:160px;
+	margin:0;
+	padding:1em;
+}
+
+div.content {
+	min-height: 80%;
+	margin-left:190px;
+	border-left:1px solid #7CB8E2;
+	padding:1em;
+}
+
+	table.t1 {  
+        margin-top:10px;  
+        margin-left:20px;  
+        margin-right:20px;  
+        margin-bottom:5px;  
+        #background-color: #FFF;  
+        #background:#EEF4F9;  
+        #border: none;  
+        border: 1;  
+        #color:#003755;  
+        border-collapse:collapse;  
+        font: 14px  "宋体";  
+	}  
+  
+	table.t1 th{  
+        background:#7CB8E2;  
+        color:#fff;  
+        padding:6px 4px;  
+        text-align:center;  
+	}  
+  
+	table.t1 td{  
+        background:#C7DDEE none repeat-x scroll center left;  
+        color:#000;  
+        padding:4px 2px;  
+	}  
+  
+	table.t1 {  
+        text-decoration:none;  
+        height:1em;  
+	}  
+  
+	table.t1 :link, table.t1  a:visited{  
+        color:#3366CC;  
+	}  
+	table.t1 :hover{                                      /* 鼠标经过时 */  
+        color:#B50000;  
+        text-decoration:underline;  
+	}  
+
+#list table{
+	text-align:center;
+	margin:0px auto;
+}
+
+#ff {
+	text-align:center;
+	width: 700px;
+        border: 0px;
+	margin:0px auto;
+}
+
+#ff form{
+	text-align:left;
+	margin:0px auto;
+}
+#box_lb {
+	position: fixed;
+	z-index: 999;
+	bottom:30px;
+	right:0;
+
+}
+</style>
+</head>
+<body>
+		<div class="container">
+
+				<div class="header">简单成绩管理系统</div>
+				<div class="left">
+					<a href="/">首页</a>
+					<ul>
+						<li><a href="student.html">学生名单</a></li>
+						<li><a href="teacher.html">教师信息</a></li>
+					</ul>
+				</div>
+<div id="list" class="content">
+	<h1 align="center">老师课程信息</h1>
+		<table border=1 class="t1">
+			<thead>
+			<tr>
+				<th style="width:10rem">课程序号</th>
+				<th style="width:10rem">课程名称</th>
+				<th style="width:4rem">老师工号</th>
+				<th style="width:10rem">姓名</th>
+				<th style="width:10rem">课程时间</th>
+				<th style="width:10rem">课程地点</th>
+			</tr>
+			</thead>
+			<tbody id="listtbody">
+			</tbody> 
+		</table>
+	</div>
+	<div id="ff">
+	<form id="insertlist" >
+	课程序号：<input type="text" name="csn"> 	
+	课程名称：<input type="text" name="cname">
+	老师工号：<input type="text" name="tsn">
+	课程时间：<input type="text" name="time">   
+	课程地点：<input type="text" name="site">
+	<button id="insert" onclick="cinsert();cinsert1()" >插入</button>
+	<button id="updata" onclick="fupdata();fupdata1()" >更新</button>
+<br>
+	</form>
+	<form id="sdelete" >
+	课程序号：<input type="text" name="csn" >
+	<button id="delete" onclick="fdelete()"  >删除</button>
+	</form>
+	<form id="squery" >
+	老师工号：<input type="text" name="tsn" >
+	<button id="query" onclick="fquery()" >查询</button>
+	</form>
+</div >
+<div id="box_lb">
+	<button id="flesh" onclick="fflesh()" >刷新</button>
+<div>
+</body>
+</html>
