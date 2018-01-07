@@ -1,0 +1,29 @@
+import tornado.httpserver
+import tornado.ioloop
+import tornado.options
+import tornado.web
+import os
+import json
+import dbconn
+dbconn.register_dsn("host=localhost dbname=scheduledb user=scdbo password=pass")
+from hanlder import *
+
+
+application=tornado.web.Application([
+    (r"/", IndexHandler),
+    (r"/teacher.html",IndexHandlerT),
+    (r"/t",teacherhandler),
+    (r"/t/([0-9]+)", teacherhandler),
+    (r"/t/teacher/([0-9]+)", teacherhandler_q),
+    (r"/t/teacher", teacherhandler_q),
+    (r"/student.html",IndexHandlerS),
+    (r"/s",studenthandler),
+    (r"/s/([0-9]+)/([0-9]+)", studenthandler),
+    (r"/s/student/([0-9]+)", studenthandler_q),
+    ])
+
+if __name__=="__main__":
+    application.listen(8888)
+    server = tornado.ioloop.IOLoop.instance()
+    #tornado.ioloop.PeriodicCallback(lambda: None, 500, server).start()
+    server.start()
